@@ -1,0 +1,104 @@
+common:
+  main_mode: 1
+  source_folder: H:\jav\bak_failed
+  failed_output_folder: H:\jav\failed
+  success_output_folder: H:\jav\test_out
+  link_mode: 0
+  scan_hardlink: false
+  failed_move: true
+  auto_exit: false
+  translate_to_sc: true
+  actor_gender: both
+  del_empty_folder: true
+  nfo_skip_days: 30
+  ignore_failed_list: false
+  download_only_missing_images: true
+  mapping_table_validity: 7
+  jellyfin: 1
+  actor_only_tag: false
+  sleep: 3
+  anonymous_fill: 0
+  multi_threading: 5
+  stop_counter: 0
+  rerun_delay: "0"
+proxy:
+  switch: true
+  proxy: 127.0.0.1:7890
+  timeout: 30
+  retry: 5
+  type: socks5
+  cacert_file: ""
+name_rule:
+  location_rule: actor + '/' + number
+  naming_rule: number + '-' + title
+  max_title_len: 50
+  image_naming_with_number: true
+  number_uppercase: true
+  number_regexs: ""
+update:
+  update_check: true
+priority:
+  website: javbus,fanza,fc2,fc2club,javdb,xcity,mgstage,avsox,jav321
+escape:
+  literals: '\()/ '
+  folders: failed, JAV_output
+debug_mode:
+  switch: false
+translate:
+  switch: false
+  engine: google-free
+  target_language: zh_cn
+  key: ""
+  delay: 1
+  values: title,outline
+  service_site: translate.google.cn
+trailer:
+  switch: true
+uncensored:
+  uncensored_prefix: S2M,BT,LAF,SMD
+media:
+  media_type: .mp4,.avi,.rmvb,.wmv,.mov,.mkv,.flv,.ts,.webm,.iso
+  sub_type: .smi,.srt,.idx,.sub,.sup,.psb,.ssa,.ass,.usf,.xss,.ssf,.rt,.lrc,.sbv,.vtt,.ttml
+watermark:
+  switch: true
+  water: 2
+extrafanart:
+  switch: true
+  extrafanart_folder: extrafanart
+  parallel_download: 1
+storyline:
+  switch: true
+  site: 1:avno1
+  censored_site: 5:xcity,6:amazon
+  uncensored_site: 3:58avgo
+  show_result: 0
+  run_mode: 1
+cc_convert:
+  mode: 1
+  vars: actor,director,label,outline,series,studio,tag,title
+javdb:
+  sites: 38,39
+face:
+  locations_model: hog
+  uncensored_only: true
+  always_imagecut: false
+  aspect_ratio: 2.12
+jellyfin:
+  multi_part_fanart: true
+actor_photo:
+  download_for_kodi: false
+strm:
+  enable: false
+  path_type: absolute
+  content_mode: simple
+  multipart_mode: separate
+  network_base_path: ""
+  use_windows_path: false
+  validate_files: true
+  strict_validation: false
+  output_suffix: ""
+scraper:
+  mode: metatube
+  metatube_url: http://192.168.10.163:8900
+  metatube_token: ""
+  fallback_to_legacy: true

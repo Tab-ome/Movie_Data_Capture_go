@@ -1,0 +1,189 @@
+========================================
+Movie Data Capture - 项目结构说明
+========================================
+
+Movie_Data_Capture_go-main/
+├── main.go                    # 程序主入口（支持CLI和GUI模式）
+├── gui_build.go               # GUI模式实现（构建标签: gui）
+├── gui_stub.go                # GUI存根（构建标签: !gui）
+├── config.yaml                # 主配置文件
+├── config_template.yaml       # 配置模板
+├── wails.json                 # Wails项目配置
+├── go.mod                     # Go模块依赖
+├── go.sum                     # Go依赖校验
+│
+├── gui/                       # GUI后端代码
+│   ├── app.go                 # 应用核心结构
+│   ├── config.go              # 配置管理API
+│   └── runner.go              # 任务运行控制
+│
+├── internal/                  # 内部包（原有代码）
+│   ├── config/                # 配置管理
+│   ├── core/                  # 核心处理逻辑
+│   └── scraper/               # 数据抓取器
+│
+├── pkg/                       # 公共包（原有代码）
+│   ├── downloader/            # 下载器
+│   ├── fragment/              # 分片文件处理
+│   ├── httpclient/            # HTTP客户端
+│   ├── logger/                # 日志系统
+│   ├── nfo/                   # NFO生成器
+│   ├── parser/                # 番号解析器
+│   └── utils/                 # 工具函数
+│
+├── frontend/                  # 前端代码
+│   ├── package.json           # Node.js项目配置
+│   ├── src/                   # 源代码
+│   │   ├── index.html         # 主HTML文件
+│   │   ├── style.css          # 样式表
+│   │   ├── main.js            # JavaScript主逻辑
+│   │   ├── components/        # 组件目录（预留）
+│   │   └── assets/            # 资源文件（预留）
+│   └── dist/                  # 编译后的前端（自动生成）
+│
+├── build/                     # 构建资源
+│   ├── appicon.png            # 应用图标
+│   ├── windows/
+│   │   └── icon.ico           # Windows图标
+│   ├── bin/                   # 编译输出目录（自动生成）
+│   └── README.md              # 构建说明
+│
+├── docs/                      # 文档目录（原有）
+├── Img/                       # 水印图片（原有）
+├── MappingTable/              # 映射表（原有）
+│
+├── build-gui.bat              # Windows GUI编译脚本
+├── build-gui.sh               # Linux/macOS GUI编译脚本
+├── build.bat                  # CLI版本编译脚本（原有）
+├── build.sh                   # CLI版本编译脚本（原有）
+│
+├── GUI_USAGE.txt              # GUI使用说明
+├── PROJECT_STRUCTURE.txt      # 本文件
+├── README.md                  # 项目说明（原有）
+├── README_GO.md               # Go版本说明（原有）
+└── USER_MANUAL.md             # 用户手册（原有）
+
+========================================
+
+## 文件说明
+
+### 核心文件
+
+- main.go: 程序入口，包含CLI逻辑和GUI模式调用
+- gui_build.go: GUI模式实现，使用Wails框架
+- gui_stub.go: 非GUI构建时的存根实现
+- config.yaml: 运行时配置文件（CLI和GUI共用）
+
+### GUI后端 (gui/)
+
+- app.go: Wails应用核心，包含状态管理和事件系统
+- config.go: 配置文件读写、验证、文件夹选择对话框
+- runner.go: 任务运行控制、文件扫描、进度更新
+
+### 前端 (frontend/)
+
+- index.html: 单页应用HTML结构
+- style.css: 现代化深色主题样式
+- main.js: 前后端通信、页面交互逻辑
+
+### 构建脚本
+
+- build-gui.bat/sh: GUI版本编译脚本
+  - 检查Wails环境
+  - 安装npm依赖
+  - 编译GUI应用
+
+- build.bat/sh: CLI版本编译脚本（原有）
+  - 仅编译Go代码
+  - 不包含GUI
+
+========================================
+
+## 编译方式
+
+### CLI版本（命令行）
+Windows: build.bat
+Linux/macOS: ./build.sh
+输出: mdc.exe / mdc
+
+### GUI版本（图形界面）
+Windows: build-gui.bat
+Linux/macOS: ./build-gui.sh
+输出: build/bin/mdc-gui.exe / mdc-gui
+
+### 开发模式
+wails dev -tags gui    # GUI开发（热重载）
+go run . -gui          # GUI运行（需手动构建前端）
+go run .               # CLI运行
+
+========================================
+
+## 运行方式
+
+### CLI模式（原有功能保持不变）
+.\mdc.exe -file "movie.mp4"
+.\mdc.exe -path "C:\movies"
+.\mdc.exe -search "SSIS-001"
+
+### GUI模式
+.\mdc.exe -gui                    # 使用CLI程序启动GUI
+.\build\bin\mdc-gui.exe           # 直接运行GUI程序
+
+========================================
+
+## 技术栈
+
+### 后端
+- Go 1.21+
+- Wails v2.10.2
+- 原有的内部包和公共包
+
+### 前端
+- 原生HTML5/CSS3/JavaScript
+- Wails Runtime API
+- 无需外部框架依赖
+
+### 构建工具
+- Go工具链
+- Wails CLI
+- npm（仅用于复制前端文件）
+
+========================================
+
+## 设计特点
+
+1. **兼容性**: CLI和GUI共存，互不影响
+2. **共享配置**: 使用同一个config.yaml文件
+3. **构建标签**: 使用Go构建标签分离CLI和GUI代码
+4. **轻量级**: 前端不依赖React/Vue等重型框架
+5. **现代化**: 深色主题、流畅动画、响应式设计
+
+========================================
+
+## 开发指南
+
+### 添加新的GUI功能
+
+1. 后端API（gui/*.go）:
+   - 在App结构体中添加方法
+   - 方法必须是公开的（首字母大写）
+   - 可以接收参数和返回值
+
+2. 前端调用（frontend/src/main.js）:
+   - 使用 window.go.gui.App.MethodName(args)
+   - 处理返回的Promise
+
+3. 前端界面（frontend/src/index.html）:
+   - 添加HTML元素
+   - 添加相应的CSS样式
+   - 绑定事件监听器
+
+### 调试技巧
+
+- GUI开发: wails dev -tags gui（自动刷新）
+- 前端调试: 在GUI中按F12打开开发者工具
+- 后端调试: logger.Info() 输出到日志
+- 事件调试: 监听runtime.EventsOn()
+
+========================================
+

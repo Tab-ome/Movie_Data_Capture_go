@@ -1,0 +1,19 @@
+{
+  "name": "movie-data-capture-frontend",
+  "version": "1.0.0",
+  "description": "Movie Data Capture GUI Frontend",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "copy": "node -e \"require('fs').cpSync('src', 'dist', {recursive: true})\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
+

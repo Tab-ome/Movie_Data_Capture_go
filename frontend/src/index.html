@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Data Capture</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- {{ AURA-X: Modify - 完整配置界面,支持所有75个配置项 }} -->
+    
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="logo">
+            <h1>🎬 Movie Data Capture</h1>
+        </div>
+        <nav class="nav">
+            <button class="nav-btn active" data-page="home">
+                <span>🏠</span> 主页
+            </button>
+            <button class="nav-btn" data-page="config">
+                <span>⚙️</span> 配置
+            </button>
+            <button class="nav-btn" data-page="logs">
+                <span>📋</span> 日志
+            </button>
+            <button class="nav-btn" data-page="files">
+                <span>📁</span> 文件
+            </button>
+            <button class="nav-btn" data-page="regex">
+                <span>🔍</span> 正则测试
+            </button>
+            <button class="nav-btn" data-page="about">
+                <span>ℹ️</span> 关于
+            </button>
+        </nav>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="main">
+        <!-- 主页 - 运行控制 -->
+        <div id="page-home" class="page active">
+            <div class="control-panel">
+                <h2>运行控制</h2>
+                
+                <div class="control-buttons">
+                    <button id="btn-start" class="btn btn-primary btn-large">
+                        <span>▶️</span> 开始刮削
+                    </button>
+                    <button id="btn-stop" class="btn btn-danger btn-large" disabled>
+                        <span>⏹️</span> 停止
+                    </button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">总计</div>
+                        <div class="stat-value" id="stat-total">0</div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-label">成功</div>
+                        <div class="stat-value" id="stat-success">0</div>
+                    </div>
+                    <div class="stat-card stat-failed">
+                        <div class="stat-label">失败</div>
+                        <div class="stat-value" id="stat-failed">0</div>
+                    </div>
+                    <div class="stat-card stat-skipped">
+                        <div class="stat-label">跳过</div>
+                        <div class="stat-value" id="stat-skipped">0</div>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <span id="progress-text">就绪</span>
+                        <span id="progress-time"></span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <!-- 文件处理列表 -->
+                <!-- {{ AURA-X: Modify - 改为分类展示文件处理状态. Approval: 寸止 }} -->
+                <div class="file-processing-section">
+                    <h3>📋 文件处理清单</h3>
+                    <div id="file-processing-list" class="file-processing-list">
+                        <p class="empty-message">点击"开始刮削"后，将在此显示文件处理状态</p>
+                        
+                        <!-- 正在处理的文件 -->
+                        <div class="file-category-section" id="category-processing">
+                            <div class="category-header" onclick="toggleCategory('processing')">
+                                <span class="category-icon">⏳</span>
+                                <span class="category-title">正在处理</span>
+                                <span class="category-count" id="count-processing">(0)</span>
+                                <span class="category-toggle" id="toggle-processing">▼</span>
+                            </div>
+                            <div class="category-content" id="content-processing"></div>
+                        </div>
+                        
+                        <!-- 成功的文件 -->
+                        <div class="file-category-section" id="category-success">
+                            <div class="category-header" onclick="toggleCategory('success')">
+                                <span class="category-icon">✅</span>
+                                <span class="category-title">成功</span>
+                                <span class="category-count" id="count-success">(0)</span>
+                                <span class="category-toggle" id="toggle-success">▼</span>
+                            </div>
+                            <div class="category-content" id="content-success"></div>
+                        </div>
+                        
+                        <!-- 失败的文件 -->
+                        <div class="file-category-section" id="category-failed">
+                            <div class="category-header" onclick="toggleCategory('failed')">
+                                <span class="category-icon">❌</span>
+                                <span class="category-title">失败</span>
+                                <span class="category-count" id="count-failed">(0)</span>
+                                <span class="category-toggle" id="toggle-failed">▼</span>
+                            </div>
+                            <div class="category-content" id="content-failed"></div>
+                        </div>
+                        
+                        <!-- 跳过的文件 -->
+                        <div class="file-category-section" id="category-skipped">
+                            <div class="category-header" onclick="toggleCategory('skipped')">
+                                <span class="category-icon">⏭️</span>
+                                <span class="category-title">已跳过</span>
+                                <span class="category-count" id="count-skipped">(0)</span>
+                                <span class="category-toggle" id="toggle-skipped">▼</span>
+                            </div>
+                            <div class="category-content" id="content-skipped"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配置页面 - 使用标签页 -->
+        <div id="page-config" class="page">
+            <div class="config-panel">
+                <div class="config-header">
+                    <h2>配置管理</h2>
+                    <div class="config-actions-top">
+                        <button class="btn btn-primary" id="btn-save-config">💾 保存配置</button>
+                        <button class="btn btn-secondary" id="btn-reload-config">🔄 重新加载</button>
+                        <button class="btn btn-danger" id="btn-reset-config">⚠️ 重置为默认</button>
+                    </div>
+                </div>
+
+                <!-- 配置标签页导航 -->
+                <div class="config-tabs">
+                    <button class="config-tab active" data-tab="basic">基础设置</button>
+                    <button class="config-tab" data-tab="network">网络与数据源</button>
+                    <button class="config-tab" data-tab="features">功能与增强</button>
+                    <button class="config-tab" data-tab="media">媒体中心</button>
+                    <button class="config-tab" data-tab="advanced">高级选项</button>
+                </div>
+
+                <!-- 标签页内容 -->
+                <div class="config-content">
+                    
+                    <!-- ==================== 基础设置标签页 ==================== -->
+                    <div id="tab-basic" class="tab-content active">
+                        
+                        <!-- 文件夹路径 -->
+                        <section class="config-section">
+                            <h3>📁 文件夹路径</h3>
+                            
+                            <div class="form-group">
+                                <label>源文件夹 <span class="required">*</span></label>
+                                <small>要处理的视频文件所在目录</small>
+                                <div class="input-group">
+                                    <input type="text" id="cfg-common-source_folder" class="form-input" placeholder="./">
+                                    <button class="btn btn-secondary btn-browse" data-target="cfg-common-source_folder">浏览</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>成功输出文件夹 <span class="required">*</span></label>
+                                <small>成功处理后的文件存放位置</small>
+                                <div class="input-group">
+                                    <input type="text" id="cfg-common-success_output_folder" class="form-input" placeholder="JAV_output">
+                                    <button class="btn btn-secondary btn-browse" data-target="cfg-common-success_output_folder">浏览</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>失败输出文件夹</label>
+                                <small>处理失败的文件存放位置</small>
+                                <div class="input-group">
+                                    <input type="text" id="cfg-common-failed_output_folder" class="form-input" placeholder="failed">
+                                    <button class="btn btn-secondary btn-browse" data-target="cfg-common-failed_output_folder">浏览</button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 运行模式 -->
+                        <section class="config-section">
+                            <h3>⚙️ 运行模式</h3>
+                            
+                            <div class="form-group">
+                                <label>主运行模式</label>
+                                <small>选择程序的运行方式</small>
+                                <select id="cfg-common-main_mode" class="form-select">
+                                    <option value="1">刮削模式（抓取元数据并整理文件）</option>
+                                    <option value="2">整理模式（仅整理文件不抓取）</option>
+                                    <option value="3">分析模式（分析文件但不移动）</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>文件处理模式</label>
+                                <small>如何处理文件：移动、软链接或硬链接</small>
+                                <select id="cfg-common-link_mode" class="form-select">
+                                    <option value="0">移动模式（移动文件到输出目录）</option>
+                                    <option value="1">软链接模式（创建符号链接）</option>
+                                    <option value="2">硬链接模式（创建硬链接）</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>多线程数量</label>
+                                <small>并行处理文件数量，0表示顺序处理</small>
+                                <input type="number" id="cfg-common-multi_threading" class="form-input" min="0" max="20" placeholder="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>请求间隔（秒）</label>
+                                <small>每次网络请求之间的等待时间，避免被封禁</small>
+                                <input type="number" id="cfg-common-sleep" class="form-input" min="1" max="60" placeholder="3">
+                            </div>
+                        </section>
+
+                        <!-- 文件处理选项 -->
+                        <section class="config-section">
+                            <h3>📄 文件处理选项</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-common-scan_hardlink">
+                                    扫描硬链接文件
+                                </label>
+                                <small>将硬链接文件也纳入处理范围</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-common-failed_move">
+                                    移动失败文件
+                                </label>
+                                <small>将处理失败的文件移动到失败文件夹</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-common-del_empty_folder">
+                                    删除空文件夹
+                                </label>
+                                <small>处理完成后自动删除空目录</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-common-ignore_failed_list">
+                                    忽略失败列表
+                                </label>
+                                <small>重新尝试之前失败的文件</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-common-download_only_missing_images">
+                                    仅下载缺失图片
+                                </label>
+                                <small>只下载不存在的图片文件，节省时间和带宽</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-common-auto_exit">
+                                    自动退出
+                                </label>
+                                <small>处理完成后自动关闭程序</small>
+                            </div>
+                        </section>
+
+                        <!-- NFO和数据选项 -->
+                        <section class="config-section">
+                            <h3>📝 NFO和数据选项</h3>
+                            
+                            <div class="form-group">
+                                <label>NFO跳过天数</label>
+                                <small>跳过N天内已生成NFO的文件（0=不跳过）</small>
+                                <input type="number" id="cfg-common-nfo_skip_days" class="form-input" min="0" max="365" placeholder="30">
+                            </div>
+
+                            <div class="form-group">
+                                <label>映射表有效期（天）</label>
+                                <small>演员、厂商等映射表的缓存有效期</small>
+                                <input type="number" id="cfg-common-mapping_table_validity" class="form-input" min="1" max="30" placeholder="7">
+                            </div>
+
+                            <div class="form-group">
+                                <label>演员性别过滤</label>
+                                <small>选择要显示的演员性别</small>
+                                <select id="cfg-common-actor_gender" class="form-select">
+                                    <option value="female">仅女性</option>
+                                    <option value="male">仅男性</option>
+                                    <option value="both">男性和女性</option>
+                                    <option value="all">全部（包括未知）</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-common-translate_to_sc">
+                                    繁体转简体
+                                </label>
+                                <small>自动将繁体中文转换为简体中文</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-common-actor_only_tag">
+                                    仅使用演员名作为标签
+                                </label>
+                                <small>不使用其他类型的标签</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>匿名填充模式</label>
+                                <small>无演员信息时的处理方式</small>
+                                <select id="cfg-common-anonymous_fill" class="form-select">
+                                    <option value="0">不填充</option>
+                                    <option value="1">填充"未知"</option>
+                                    <option value="2">填充番号</option>
+                                </select>
+                            </div>
+                        </section>
+
+                        <!-- 命名规则 -->
+                        <!-- {{ AURA-X: Modify - 优化命名规则配置，添加详细说明和预设模板. Approval: 寸止 }} -->
+                        <section class="config-section">
+                            <h3>📝 命名规则</h3>
+                            
+                            <!-- 可用变量说明 -->
+                            <div class="help-text" style="margin-bottom: 15px; padding: 12px; background: #e8f4f8; border-left: 4px solid #2196F3; border-radius: 4px;">
+                                <strong>📌 可用变量：</strong>
+                                <code>number</code> (番号)、
+                                <code>title</code> (标题)、
+                                <code>actor</code> (演员)、
+                                <code>studio</code> (制作商)、
+                                <code>label</code> (系列)、
+                                <code>year</code> (年份)、
+                                <code>director</code> (导演)
+                                <br>
+                                <strong>🔧 运算符：</strong>
+                                <code>+</code> (连接)、
+                                <code>'/'</code> (路径分隔)、
+                                <code>'-'</code> (连字符)、
+                                <code>' '</code> (空格)
+                            </div>
+
+                            <!-- 预设模板快速选择 -->
+                            <div class="form-group">
+                                <label>快速选择预设模板</label>
+                                <small>选择常用的命名规则模板，自动填充下方字段</small>
+                                <select id="naming-template-select" class="form-select" onchange="applyNamingTemplate()">
+                                    <option value="">-- 选择预设模板 --</option>
+                                    <option value="jellyfin">Jellyfin/Emby推荐（演员/番号-标题）</option>
+                                    <option value="simple">简洁格式（仅番号）</option>
+                                    <option value="detailed">详细格式（含制作商和演员）</option>
+                                    <option value="by_year">按年份分类</option>
+                                    <option value="by_studio">按制作商分类</option>
+                                    <option value="custom">自定义</option>
+                                </select>
+                            </div>
+
+                            <!-- 模板预览区域 -->
+                            <div id="template-preview" class="help-text" style="display: none; margin-bottom: 15px; padding: 12px; background: #f5f5f5; border-radius: 4px;">
+                                <strong>📂 预览效果：</strong>
+                                <div id="template-preview-text" style="margin-top: 8px; font-family: monospace; color: #2e7d32;"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>文件夹命名规则 <span style="color: #f44336;">*</span></label>
+                                <small>决定影片存放的目录结构</small>
+                                <input type="text" id="cfg-name_rule-location_rule" class="form-input" placeholder="actor + '/' + number">
+                                <div class="help-text" style="margin-top: 5px; font-size: 12px;">
+                                    💡 示例：<code>actor + '/' + number</code> → 波多野结衣/SSIS-123/
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>文件命名规则 <span style="color: #f44336;">*</span></label>
+                                <small>决定视频文件和NFO的名称</small>
+                                <input type="text" id="cfg-name_rule-naming_rule" class="form-input" placeholder="number + '-' + title">
+                                <div class="help-text" style="margin-top: 5px; font-size: 12px;">
+                                    💡 示例：<code>number + '-' + title</code> → SSIS-123-美丽的诱惑.mp4
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>标题最大长度</label>
+                                <small>超过此长度的标题将被截断，避免文件名过长</small>
+                                <input type="number" id="cfg-name_rule-max_title_len" class="form-input" min="10" max="200" placeholder="50">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-name_rule-image_naming_with_number">
+                                    图片名包含番号
+                                </label>
+                                <small>推荐开启，便于识别图片对应的影片（如：SSIS-123-poster.jpg）</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-name_rule-number_uppercase">
+                                    番号大写
+                                </label>
+                                <small>将番号统一转换为大写字母（ssis-123 → SSIS-123）</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>自定义番号正则表达式</label>
+                                <small>留空使用内置规则，支持多个正则用逗号分隔</small>
+                                <input type="text" id="cfg-name_rule-number_regexs" class="form-input" placeholder="">
+                                <div class="help-text" style="margin-top: 5px;">
+                                    💡 提示：可在 <strong>"正则测试"</strong> 页面进行测试后再填写
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 媒体类型 -->
+                        <section class="config-section">
+                            <h3>🎥 媒体类型</h3>
+                            
+                            <div class="form-group">
+                                <label>视频文件扩展名</label>
+                                <small>用逗号分隔，如: .mp4,.avi,.mkv</small>
+                                <input type="text" id="cfg-media-media_type" class="form-input" placeholder=".mp4,.avi,.rmvb,.wmv,.mov,.mkv,.flv,.ts,.webm,.iso">
+                            </div>
+
+                            <div class="form-group">
+                                <label>字幕文件扩展名</label>
+                                <small>用逗号分隔，如: .srt,.ass,.ssa</small>
+                                <input type="text" id="cfg-media-sub_type" class="form-input" placeholder=".smi,.srt,.idx,.sub,.sup,.psb,.ssa,.ass">
+                            </div>
+                        </section>
+
+                        <!-- 停止和延迟 -->
+                        <section class="config-section">
+                            <h3>⏸️ 停止和延迟</h3>
+                            
+                            <div class="form-group">
+                                <label>停止计数器</label>
+                                <small>处理指定数量文件后停止（0=不限制）</small>
+                                <input type="number" id="cfg-common-stop_counter" class="form-input" min="0" placeholder="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>重运行延迟</label>
+                                <small>格式: 秒数 或 1h30m45s（0=不延迟）</small>
+                                <input type="text" id="cfg-common-rerun_delay" class="form-input" placeholder="0">
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- ==================== 网络与数据源标签页 ==================== -->
+                    <div id="tab-network" class="tab-content">
+                        
+                        <!-- 代理配置 -->
+                        <section class="config-section">
+                            <h3>🌐 代理配置</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-proxy-switch">
+                                    启用代理
+                                </label>
+                                <small>通过代理服务器访问网络</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>代理地址</label>
+                                <small>格式: host:port，如: 127.0.0.1:7890</small>
+                                <input type="text" id="cfg-proxy-proxy" class="form-input" placeholder="127.0.0.1:7890">
+                            </div>
+
+                            <div class="form-group">
+                                <label>代理类型</label>
+                                <select id="cfg-proxy-type" class="form-select">
+                                    <option value="socks5">SOCKS5</option>
+                                    <option value="socks5h">SOCKS5H（DNS通过代理）</option>
+                                    <option value="http">HTTP</option>
+                                    <option value="https">HTTPS</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>超时时间（秒）</label>
+                                <small>网络请求超时时间</small>
+                                <input type="number" id="cfg-proxy-timeout" class="form-input" min="5" max="120" placeholder="30">
+                            </div>
+
+                            <div class="form-group">
+                                <label>重试次数</label>
+                                <small>请求失败时的重试次数</small>
+                                <input type="number" id="cfg-proxy-retry" class="form-input" min="1" max="10" placeholder="5">
+                            </div>
+
+                            <div class="form-group">
+                                <label>CA证书文件路径</label>
+                                <small>用于HTTPS验证的证书文件（可选）</small>
+                                <input type="text" id="cfg-proxy-cacert_file" class="form-input" placeholder="">
+                            </div>
+                        </section>
+
+                        <!-- 数据源优先级 -->
+                        <section class="config-section">
+                            <h3>🎯 数据源优先级</h3>
+                            
+                            <div class="form-group">
+                                <label>刮削源顺序</label>
+                                <small>用逗号分隔，从左到右依次尝试</small>
+                                <textarea id="cfg-priority-website" class="form-textarea" rows="3" placeholder="javbus,fanza,fc2,fc2club,javdb,xcity,mgstage,avsox,jav321"></textarea>
+                                <div class="help-text">
+                                    <strong>可用数据源：</strong>javbus, fanza, fc2, fc2club, javdb, xcity, mgstage, avsox, jav321
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 数据抓取模式 -->
+                        <section class="config-section">
+                            <h3>🔄 数据抓取模式</h3>
+                            
+                            <div class="form-group">
+                                <label>抓取模式</label>
+                                <small>选择数据获取方式</small>
+                                <select id="cfg-scraper-mode" class="form-select">
+                                    <option value="legacy">Legacy模式（直接抓取）</option>
+                                    <option value="metatube">MetaTube API模式</option>
+                                </select>
+                                <div class="help-text">
+                                    <strong>Legacy模式：</strong>直接从数据源网站抓取，使用上方配置的优先级顺序<br>
+                                    <strong>MetaTube API模式：</strong>通过MetaTube服务器获取数据，需要部署MetaTube服务
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>MetaTube服务器地址</label>
+                                <small>MetaTube API服务器URL（仅MetaTube模式需要）</small>
+                                <input type="text" id="cfg-scraper-metatube_url" class="form-input" placeholder="http://localhost:8080">
+                            </div>
+
+                            <div class="form-group">
+                                <label>MetaTube认证令牌</label>
+                                <small>API认证令牌（可选，如果服务器需要）</small>
+                                <input type="text" id="cfg-scraper-metatube_token" class="form-input" placeholder="">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-scraper-fallback_to_legacy">
+                                    启用失败回退
+                                </label>
+                                <small>MetaTube失败时自动回退到Legacy模式</small>
+                            </div>
+
+                            <div class="help-text">
+                                <strong>💡 提示：</strong>如需使用MetaTube模式，请先部署MetaTube服务器<br>
+                                项目地址：<a href="https://github.com/metatube-community/metatube-sdk-go" target="_blank">https://github.com/metatube-community/metatube-sdk-go</a>
+                            </div>
+                        </section>
+
+                        <!-- JavDB配置 -->
+                        <section class="config-section">
+                            <h3>🗄️ JavDB配置</h3>
+                            
+                            <div class="form-group">
+                                <label>JavDB站点ID</label>
+                                <small>用逗号分隔的站点编号</small>
+                                <input type="text" id="cfg-javdb-sites" class="form-input" placeholder="38,39">
+                            </div>
+                        </section>
+
+                        <!-- 转义配置 -->
+                        <section class="config-section">
+                            <h3>🔤 转义配置</h3>
+                            
+                            <div class="form-group">
+                                <label>转义字符</label>
+                                <small>文件名中需要转义的特殊字符</small>
+                                <input type="text" id="cfg-escape-literals" class="form-input" placeholder="\()/ ">
+                            </div>
+
+                            <div class="form-group">
+                                <label>转义文件夹</label>
+                                <small>跳过处理的文件夹名（用逗号分隔）</small>
+                                <input type="text" id="cfg-escape-folders" class="form-input" placeholder="failed, JAV_output">
+                            </div>
+                        </section>
+
+                        <!-- 无码识别 -->
+                        <section class="config-section">
+                            <h3>🔓 无码识别</h3>
+                            
+                            <div class="form-group">
+                                <label>无码前缀</label>
+                                <small>识别无码影片的番号前缀（用逗号分隔）</small>
+                                <input type="text" id="cfg-uncensored-uncensored_prefix" class="form-input" placeholder="S2M,BT,LAF,SMD">
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- ==================== 功能与增强标签页 ==================== -->
+                    <div id="tab-features" class="tab-content">
+                        
+                        <!-- 翻译功能 -->
+                        <section class="config-section">
+                            <h3>🌍 翻译功能</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-translate-switch">
+                                    启用翻译
+                                </label>
+                                <small>自动翻译标题和简介</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>翻译引擎</label>
+                                <select id="cfg-translate-engine" class="form-select">
+                                    <option value="google-free">Google（免费）</option>
+                                    <option value="google">Google API</option>
+                                    <option value="deepl">DeepL</option>
+                                    <option value="baidu">百度翻译</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>目标语言</label>
+                                <input type="text" id="cfg-translate-target_language" class="form-input" placeholder="zh_cn">
+                            </div>
+
+                            <div class="form-group">
+                                <label>API密钥</label>
+                                <small>某些翻译引擎需要API密钥</small>
+                                <input type="password" id="cfg-translate-key" class="form-input" placeholder="">
+                            </div>
+
+                            <div class="form-group">
+                                <label>翻译延迟（秒）</label>
+                                <small>每次翻译请求的延迟时间</small>
+                                <input type="number" id="cfg-translate-delay" class="form-input" min="0" max="10" placeholder="1">
+                            </div>
+
+                            <div class="form-group">
+                                <label>翻译字段</label>
+                                <small>要翻译的字段，用逗号分隔</small>
+                                <input type="text" id="cfg-translate-values" class="form-input" placeholder="title,outline">
+                            </div>
+
+                            <div class="form-group">
+                                <label>翻译服务站点</label>
+                                <small>Google翻译的服务地址</small>
+                                <input type="text" id="cfg-translate-service_site" class="form-input" placeholder="translate.google.cn">
+                            </div>
+                        </section>
+
+                        <!-- 水印功能 -->
+                        <section class="config-section">
+                            <h3>💧 水印功能</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-watermark-switch">
+                                    启用水印
+                                </label>
+                                <small>在封面图上添加水印</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>水印位置</label>
+                                <select id="cfg-watermark-water" class="form-select">
+                                    <option value="0">左上</option>
+                                    <option value="1">右上</option>
+                                    <option value="2">左下</option>
+                                    <option value="3">右下</option>
+                                    <option value="4">居中</option>
+                                </select>
+                            </div>
+                        </section>
+
+                        <!-- 额外剧照 -->
+                        <section class="config-section">
+                            <h3>🖼️ 额外剧照</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-extrafanart-switch">
+                                    下载额外剧照
+                                </label>
+                                <small>下载更多的剧照图片</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>剧照文件夹名</label>
+                                <input type="text" id="cfg-extrafanart-extrafanart_folder" class="form-input" placeholder="extrafanart">
+                            </div>
+
+                            <div class="form-group">
+                                <label>并行下载数</label>
+                                <small>同时下载的剧照数量</small>
+                                <input type="number" id="cfg-extrafanart-parallel_download" class="form-input" min="1" max="10" placeholder="1">
+                            </div>
+                        </section>
+
+                        <!-- 预告片 -->
+                        <section class="config-section">
+                            <h3>🎬 预告片</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-trailer-switch">
+                                    下载预告片
+                                </label>
+                                <small>下载影片预告片视频</small>
+                            </div>
+                        </section>
+
+                        <!-- 剧情刮削 -->
+                        <section class="config-section">
+                            <h3>📖 剧情刮削</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-storyline-switch">
+                                    启用剧情刮削
+                                </label>
+                                <small>从指定网站获取剧情简介</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>默认站点</label>
+                                <input type="text" id="cfg-storyline-site" class="form-input" placeholder="1:avno1">
+                            </div>
+
+                            <div class="form-group">
+                                <label>有码站点</label>
+                                <input type="text" id="cfg-storyline-censored_site" class="form-input" placeholder="5:xcity,6:amazon">
+                            </div>
+
+                            <div class="form-group">
+                                <label>无码站点</label>
+                                <input type="text" id="cfg-storyline-uncensored_site" class="form-input" placeholder="3:58avgo">
+                            </div>
+
+                            <div class="form-group">
+                                <label>显示结果</label>
+                                <input type="number" id="cfg-storyline-show_result" class="form-input" min="0" max="5" placeholder="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>运行模式</label>
+                                <select id="cfg-storyline-run_mode" class="form-select">
+                                    <option value="0">快速模式</option>
+                                    <option value="1">标准模式</option>
+                                    <option value="2">深度模式</option>
+                                </select>
+                            </div>
+                        </section>
+
+                        <!-- 人脸识别 -->
+                        <section class="config-section">
+                            <h3>👤 人脸识别</h3>
+                            
+                            <div class="form-group">
+                                <label>识别模型</label>
+                                <select id="cfg-face-locations_model" class="form-select">
+                                    <option value="hog">HOG（快速）</option>
+                                    <option value="cnn">CNN（精确）</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-face-uncensored_only">
+                                    仅无码影片
+                                </label>
+                                <small>只对无码影片进行人脸识别</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-face-always_imagecut">
+                                    总是裁剪封面
+                                </label>
+                                <small>总是裁剪封面图片</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>封面宽高比</label>
+                                <small>裁剪后封面的宽高比</small>
+                                <input type="number" id="cfg-face-aspect_ratio" class="form-input" step="0.01" min="1" max="3" placeholder="2.12">
+                            </div>
+                        </section>
+
+                        <!-- 简繁转换 -->
+                        <section class="config-section">
+                            <h3>🈳 简繁转换</h3>
+                            
+                            <div class="form-group">
+                                <label>转换模式</label>
+                                <select id="cfg-cc_convert-mode" class="form-select">
+                                    <option value="0">不转换</option>
+                                    <option value="1">繁体转简体</option>
+                                    <option value="2">简体转繁体</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>转换字段</label>
+                                <small>要进行简繁转换的字段（用逗号分隔）</small>
+                                <input type="text" id="cfg-cc_convert-vars" class="form-input" placeholder="actor,director,label,outline,series,studio,tag,title">
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- ==================== 媒体中心标签页 ==================== -->
+                    <div id="tab-media" class="tab-content">
+                        
+                        <!-- Jellyfin设置 -->
+                        <section class="config-section">
+                            <h3>📺 Jellyfin设置</h3>
+                            
+                            <div class="form-group">
+                                <label>Jellyfin兼容模式</label>
+                                <small>选择NFO格式</small>
+                                <select id="cfg-common-jellyfin" class="form-select">
+                                    <option value="0">Kodi标准模式</option>
+                                    <option value="1">Jellyfin模式</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-jellyfin-multi_part_fanart">
+                                    多分片剧照
+                                </label>
+                                <small>为多分片视频生成独立的剧照</small>
+                            </div>
+                        </section>
+
+                        <!-- 演员照片 -->
+                        <section class="config-section">
+                            <h3>👥 演员照片</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-actor_photo-download_for_kodi">
+                                    为Kodi下载演员照片
+                                </label>
+                                <small>下载演员头像到Kodi目录</small>
+                            </div>
+                        </section>
+
+                        <!-- STRM文件配置 -->
+                        <section class="config-section">
+                            <h3>🔗 STRM文件配置</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-strm-enable">
+                                    启用STRM文件生成
+                                </label>
+                                <small>生成STRM文件而不是复制视频文件</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>路径类型</label>
+                                <select id="cfg-strm-path_type" class="form-select">
+                                    <option value="absolute">绝对路径</option>
+                                    <option value="relative">相对路径</option>
+                                    <option value="network">网络路径</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>内容模式</label>
+                                <select id="cfg-strm-content_mode" class="form-select">
+                                    <option value="simple">简单模式</option>
+                                    <option value="detailed">详细模式</option>
+                                    <option value="playlist">播放列表</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>分片模式</label>
+                                <select id="cfg-strm-multipart_mode" class="form-select">
+                                    <option value="separate">分离</option>
+                                    <option value="combined">合并</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>网络基础路径</label>
+                                <small>网络共享的基础路径，如: \\nas\movies</small>
+                                <input type="text" id="cfg-strm-network_base_path" class="form-input" placeholder="">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-strm-use_windows_path">
+                                    使用Windows路径格式
+                                </label>
+                                <small>使用反斜杠\而不是斜杠/</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-strm-validate_files">
+                                    验证文件存在
+                                </label>
+                                <small>检查引用的文件是否存在</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-strm-strict_validation">
+                                    严格验证
+                                </label>
+                                <small>文件不存在时报错</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>输出文件后缀</label>
+                                <small>STRM文件的自定义后缀</small>
+                                <input type="text" id="cfg-strm-output_suffix" class="form-input" placeholder="">
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- ==================== 高级选项标签页 ==================== -->
+                    <div id="tab-advanced" class="tab-content">
+                        
+                        <!-- 调试模式 -->
+                        <section class="config-section">
+                            <h3>🐛 调试模式</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-debug_mode-switch">
+                                    启用调试模式
+                                </label>
+                                <small>输出详细的调试信息到日志</small>
+                            </div>
+                        </section>
+
+                        <!-- 更新检查 -->
+                        <section class="config-section">
+                            <h3>🔄 更新检查</h3>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="cfg-update-update_check">
+                                    启用更新检查
+                                </label>
+                                <small>启动时检查程序更新</small>
+                            </div>
+                        </section>
+
+                        <!-- 配置文件管理 -->
+                        <section class="config-section">
+                            <h3>💾 配置文件管理</h3>
+                            
+                            <div class="form-group">
+                                <p>当前配置文件: <code>config.yaml</code></p>
+                                <div class="button-group">
+                                    <button class="btn btn-secondary" id="btn-export-config">导出配置</button>
+                                    <button class="btn btn-secondary" id="btn-import-config">导入配置</button>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 日志页面 -->
+        <div id="page-logs" class="page">
+            <div class="logs-panel">
+                <div class="logs-header">
+                    <h2>运行日志</h2>
+                    <div class="logs-controls">
+                        <select id="log-filter" class="form-select">
+                            <option value="ALL">全部</option>
+                            <option value="INFO">信息</option>
+                            <option value="WARN">警告</option>
+                            <option value="ERROR">错误</option>
+                        </select>
+                        <button class="btn btn-secondary" id="btn-clear-logs">清空日志</button>
+                    </div>
+                </div>
+                <div id="logs-container" class="logs-container"></div>
+            </div>
+        </div>
+
+        <!-- 文件页面 -->
+        <div id="page-files" class="page">
+            <div class="files-panel">
+                <h2>文件列表</h2>
+                <button class="btn btn-primary" id="btn-refresh-files">🔄 刷新列表</button>
+                <div id="files-container" class="files-container">
+                    <p class="empty-message">点击"刷新列表"加载文件</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 正则测试页面 -->
+        <div id="page-regex" class="page">
+            <div class="regex-panel">
+                <h2>🔍 正则表达式测试工具</h2>
+                
+                <!-- 预定义模式选择 -->
+                <section class="config-section">
+                    <h3>📋 预定义正则模式</h3>
+                    <div class="form-group">
+                        <label>选择预定义模式</label>
+                        <small>快速选择常用的番号识别正则</small>
+                        <select id="regex-preset-select" class="form-select">
+                            <option value="">-- 选择预定义模式 --</option>
+                        </select>
+                        <button class="btn btn-secondary" id="btn-load-presets">🔄 加载预设</button>
+                    </div>
+                    <div id="preset-description" class="help-text" style="display: none; margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px;">
+                        <strong>说明：</strong><span id="preset-desc-text"></span><br>
+                        <strong>示例：</strong><span id="preset-example-text"></span>
+                    </div>
+                </section>
+
+                <!-- 自定义正则输入 -->
+                <section class="config-section">
+                    <h3>✏️ 自定义正则表达式</h3>
+                    <div class="form-group">
+                        <label>正则表达式</label>
+                        <small>输入自定义的正则表达式，使用捕获组 () 提取番号</small>
+                        <textarea id="regex-pattern-input" class="form-textarea" rows="3" placeholder="例如: (?i)([a-z]+)[-_](\d+)"></textarea>
+                        <div id="regex-validation" class="validation-message"></div>
+                    </div>
+                    <button class="btn btn-primary" id="btn-validate-regex">✓ 验证语法</button>
+                </section>
+
+                <!-- 测试文件名 -->
+                <section class="config-section">
+                    <h3>📝 测试文件名</h3>
+                    <div class="form-group">
+                        <label>文件名列表</label>
+                        <small>每行一个文件名（可以包含扩展名，也可以不包含）</small>
+                        <textarea id="regex-filenames-input" class="form-textarea" rows="8" placeholder="ABC-123.mp4&#10;IPX-456_HD.avi&#10;FC2PPV-1234567.mkv&#10;SSIS-789-C.mp4"></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="btn-test-regex">🚀 开始测试</button>
+                    <button class="btn btn-secondary" id="btn-suggest-pattern">💡 智能推荐</button>
+                </section>
+
+                <!-- 测试结果 -->
+                <section class="config-section">
+                    <h3>📊 测试结果</h3>
+                    <div id="regex-test-results" class="regex-results">
+                        <p class="empty-message">暂无测试结果，请输入正则表达式和文件名后点击"开始测试"</p>
+                    </div>
+                </section>
+
+                <!-- 使用说明 -->
+                <section class="config-section">
+                    <h3>📖 使用说明</h3>
+                    <div class="help-text">
+                        <p><strong>基本用法：</strong></p>
+                        <ol>
+                            <li>选择预定义模式或输入自定义正则表达式</li>
+                            <li>输入要测试的文件名（每行一个）</li>
+                            <li>点击"开始测试"查看匹配结果</li>
+                            <li>如果满意，复制正则表达式到配置页面的"自定义番号正则表达式"字段</li>
+                        </ol>
+                        <p><strong>正则表达式提示：</strong></p>
+                        <ul>
+                            <li>使用 <code>(?i)</code> 开头表示不区分大小写</li>
+                            <li>使用 <code>()</code> 捕获组提取番号部分</li>
+                            <li>使用 <code>[-_]</code> 匹配破折号或下划线</li>
+                            <li>使用 <code>\d+</code> 匹配一个或多个数字</li>
+                            <li>使用 <code>[a-z]+</code> 匹配一个或多个字母</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- 关于页面 -->
+        <div id="page-about" class="page">
+            <div class="about-panel">
+                <h2>关于 Movie Data Capture</h2>
+                <div class="about-content">
+                    <p><strong>版本:</strong> 1.0.0 (GUI版)</p>
+                    <p><strong>描述:</strong> 电影元数据自动刮削和整理工具</p>
+                    <p><strong>支持平台:</strong> Windows 10/11, Linux, macOS</p>
+                    <p><strong>技术栈:</strong> Go + Wails v2 + 原生Web技术</p>
+                    <hr>
+                    <h3>支持的数据源</h3>
+                    <ul>
+                        <li>JavaBus - 综合数据源</li>
+                        <li>FANZA - 官方高质量数据</li>
+                        <li>JavDB - 备用综合源</li>
+                        <li>FC2 / FC2Club - FC2作品</li>
+                        <li>X-City - 无码作品</li>
+                        <li>MGStage - 综合备用源</li>
+                    </ul>
+                    <hr>
+                    <p><strong>GitHub:</strong> <a href="#" onclick="window.runtime.BrowserOpenURL('https://github.com/Feng4/movie_data_capture_go'); return false;">查看项目</a></p>
+                    <p>© 2025 MDC Team. MIT License.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部状态栏 -->
+    <footer class="footer">
+        <div class="footer-left">
+            <span id="status-text">就绪</span>
+        </div>
+        <div class="footer-right">
+            <span>Movie Data Capture v1.0.0</span>
+        </div>
+    </footer>
+
+    <script src="wailsjs/runtime/runtime.js"></script>
+    <script type="module" src="/main.js"></script>
+</body>
+</html>

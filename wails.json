@@ -1,0 +1,25 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Movie Data Capture",
+  "outputfilename": "mdc-gui",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "MDC Team",
+    "email": ""
+  },
+  "info": {
+    "companyName": "MDC",
+    "productName": "Movie Data Capture",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2025",
+    "comments": "电影元数据刮削工具"
+  },
+  "wailsjsdir": "./frontend",
+  "version": "2",
+  "debounceMS": 100,
+  "nsisType": "multiple"
+}
+

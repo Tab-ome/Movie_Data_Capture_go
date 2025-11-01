@@ -1,0 +1,70 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+mdc
+mdc-*
+!mdc-*.go
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build directories
+build/bin/
+dist/
+
+# Log files
+*.log
+logs/
+
+# Configuration backup files
+*.backup
+
+# Output directories (保留结构，但不提交处理后的文件)
+JAV_output/
+failed/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/package-lock.json.md5
+
+# OS specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Test files (保留测试代码，但不提交测试结果)
+*_test_report.md
+test_output/
+
+# Binary installers
+*.msi
+*.dmg
+*.pkg
+

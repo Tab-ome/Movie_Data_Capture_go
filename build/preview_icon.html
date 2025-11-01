@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDC 图标预览</title>
+    <!-- {{ AURA-X: Create - 图标预览HTML页面 }} -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .preview-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .preview-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .icon-container {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+        
+        .icon-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .size-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .dimensions {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .info-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .info-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .color-item {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .color-box {
+            width: 100%;
+            height: 80px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .color-code {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .features {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .features li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Movie Data Capture 图标设计</h1>
+        
+        <div class="info-section">
+            <h2>设计理念</h2>
+            <p><strong>主题：</strong>电影胶片 + 数据融合</p>
+            <p><strong>风格：</strong>扁平化2.5D，现代科技感</p>
+            <ul class="features">
+                <li>电影胶片卷轴作为主体元素，直观体现应用核心功能</li>
+                <li>金色数据点象征智能数据刮削与采集</li>
+                <li>蓝紫渐变营造专业科技氛围</li>
+                <li>MDC字母标识增强品牌识别度</li>
+                <li>圆角设计符合现代UI审美</li>
+            </ul>
+        </div>
+        
+        <div class="info-section">
+            <h2>色彩方案</h2>
+            <div class="color-palette">
+                <div class="color-item">
+                    <div class="color-box" style="background: linear-gradient(135deg, #5B7FFF, #9D6FFF);"></div>
+                    <div class="color-code">#5B7FFF → #9D6FFF</div>
+                    <div style="color: #666; font-size: 0.85rem; margin-top: 5px;">主色渐变</div>
+                </div>
+                <div class="color-item">
+                    <div class="color-box" style="background: #FFB84D;"></div>
+                    <div class="color-code">#FFB84D</div>
+                    <div style="color: #666; font-size: 0.85rem; margin-top: 5px;">点缀色</div>
+                </div>
+                <div class="color-item">
+                    <div class="color-box" style="background: linear-gradient(135deg, #1a1a2e, #16213e);"></div>
+                    <div class="color-code">#1a1a2e → #16213e</div>
+                    <div style="color: #666; font-size: 0.85rem; margin-top: 5px;">背景渐变</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preview-grid">
+            <div class="preview-card">
+                <div class="size-label">大图标</div>
+                <div class="icon-container">
+                    <object data="appicon.svg" type="image/svg+xml" width="180" height="180">
+                        SVG图标
+                    </object>
+                </div>
+                <div class="dimensions">512 × 512 px</div>
+            </div>
+            
+            <div class="preview-card">
+                <div class="size-label">中等图标</div>
+                <div class="icon-container">
+                    <object data="appicon.svg" type="image/svg+xml" width="120" height="120">
+                        SVG图标
+                    </object>
+                </div>
+                <div class="dimensions">256 × 256 px</div>
+            </div>
+            
+            <div class="preview-card">
+                <div class="size-label">小图标</div>
+                <div class="icon-container">
+                    <object data="appicon.svg" type="image/svg+xml" width="64" height="64">
+                        SVG图标
+                    </object>
+                </div>
+                <div class="dimensions">128 × 128 px</div>
+            </div>
+            
+            <div class="preview-card">
+                <div class="size-label">任务栏</div>
+                <div class="icon-container">
+                    <object data="appicon.svg" type="image/svg+xml" width="32" height="32">
+                        SVG图标
+                    </object>
+                </div>
+                <div class="dimensions">64 × 64 px</div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h2>下一步操作</h2>
+            <p>图标SVG源文件已创建，请选择生成方式：</p>
+            <div class="btn-group">
+                <a href="#" class="btn btn-primary" onclick="alert('请运行：build/generate_icons.bat\n\n或查看：build/QUICK_ICON_SETUP.txt'); return false;">
+                    🚀 自动生成（需要Python）
+                </a>
+                <a href="https://cloudconvert.com/svg-to-png" class="btn btn-secondary" target="_blank">
+                    🌐 在线转换SVG→PNG
+                </a>
+                <a href="https://www.icoconverter.com/" class="btn btn-secondary" target="_blank">
+                    🔧 在线转换PNG→ICO
+                </a>
+                <a href="ICON_GUIDE.md" class="btn btn-secondary">
+                    📖 查看完整指南
+                </a>
+            </div>
+        </div>
+        
+        <div class="info-section" style="background: #f8f9fa; border: 2px dashed #667eea;">
+            <h2 style="color: #764ba2;">💡 快速提示</h2>
+            <p><strong>最简单的方法：</strong></p>
+            <ol style="margin-left: 20px; margin-top: 15px; line-height: 1.8;">
+                <li>双击运行 <code style="background: #e9ecef; padding: 2px 8px; border-radius: 4px;">build/generate_icons.bat</code></li>
+                <li>等待脚本自动完成</li>
+                <li>运行 <code style="background: #e9ecef; padding: 2px 8px; border-radius: 4px;">build-gui.bat</code> 重新编译</li>
+                <li>享受您的新图标！🎉</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>
+
